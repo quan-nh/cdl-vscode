@@ -1,0 +1,34 @@
+{
+    "name": "cdl",
+    "displayName": "CDL",
+    "description": "CDL syntax highlighting for Visual Studio Code",
+    "version": "0.0.1",
+    "publisher": "quan",
+    "engines": {
+        "vscode": "^1.13.0"
+    },
+    "categories": [
+        "Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "cdl",
+            "aliases": ["CDL", "cdl"],
+            "extensions": [".cdl"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "cdl",
+            "scopeName": "source.cdl",
+            "path": "./syntaxes/cdl.tmLanguage.json"
+        }],
+        "snippets": [{
+            "language": "cdl",
+            "path": "./snippets/snippets.json"
+        }]
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tentamen/cdl-vscode"
+    }
+}

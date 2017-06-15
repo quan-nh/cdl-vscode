@@ -1,0 +1,42 @@
+{
+  "source": {
+    "prefix": "source",
+    "body": "source(${1:SourceNames})",
+    "description": "Select data source(s)."
+  },
+  "search": {
+    "prefix": "search",
+    "body": "search(${1:Pattern})",
+    "description": "Performs a search for documents from the given source."
+  },
+  "find": {
+    "prefix": "find",
+    "body": "find(${1:Pattern})",
+    "description": "Find the first occurrence of the pattern given as argument after the current cursor; discard sample if not found."
+  },
+  "btc": {
+    "prefix": "btc",
+    "body": "btc",
+    "description": "A pattern matching Bitcoin addresses."
+  },
+  "column": {
+    "prefix": "column",
+    "body": "column(${1:ColumnName})",
+    "description": "Create a column with the given name and display 'The Current Value' (the result of a .find, .match, or .get) in that column."
+  },
+  "showRanges": {
+    "prefix": "showRanges",
+    "body": "showRanges",
+    "description": "Flavor: Initially select the 'Ranges' button."
+  },
+  "showDate": {
+    "prefix": "showDate",
+    "body": "showDate",
+    "description": "Flavor: Initially select the 'Date' button."
+  },
+  "panel": {
+    "prefix": "panel",
+    "body": "panel(${1:Results})",
+    "description": "Create an output panel to display the samples that reach to this point."
+  }
+}

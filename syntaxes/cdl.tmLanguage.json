@@ -1,0 +1,41 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "CDL",
+	"patterns": [
+		{
+			"include": "#operators"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#comments"
+		}
+	],
+	"repository": {
+		"operators": {
+      "begin": "\\.([\\w]+)\\(?",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.cdl" }
+      },
+      "end": "\\)?",
+      "patterns": [
+        { "include": "#operators" },
+				{ "include": "#strings" }
+      ]
+    },
+		"strings": {
+      "patterns": [{
+				"name": "string.quoted.other.cdl",
+				"match": "[a-zA-Z0-9\\_\\-\\s]+"
+			}]
+		},
+		"comments": {
+			"patterns": [{
+				"name": "comment.line.double-slash.cdl",
+				"match": "(//).*"
+			}]
+		}
+	},
+	"scopeName": "source.cdl"
+}
