@@ -1,42 +1,666 @@
 {
+  // Source Controls
   "source": {
     "prefix": "source",
     "body": "source(${1:SourceNames})",
     "description": "Select data source(s)."
   },
+  "allowDuplicates": {
+    "prefix": "allowDuplicates",
+    "body": "allowDuplicates",
+    "description": "Allow duplicates when creating samples."
+  },
+  "onlyFirst": {
+    "prefix": "onlyFirst",
+    "body": "onlyFirst",
+    "description": "Only first search hit per document is considered when creating samples."
+  },
+  "requestSize": {
+    "prefix": "requestSize",
+    "body": "requestSize(${1:NumberDocuments})",
+    "description": "Only first search hit per document is considered when creating samples."
+  },
+  "require": {
+    "prefix": "require",
+    "body": "require(${1:FieldName}, ${2:RequiredValue})",
+    "description": "Require that all documents returned from the search have a certain field (meta-variable, or structured data field) with a specified value, such as .require(language, english)."
+  },
+
+  // Date Controls
+  "afterDate": {
+    "prefix": "afterDate",
+    "body": "afterDate(${1:DateOrRelativeDate})",
+    "description": "Restrict path to samples with dates after the specified date."
+  },
+  "beforeDate": {
+    "prefix": "beforeDate",
+    "body": "beforeDate(${1:DateOrRelativeDate})",
+    "description": "Restrict path to samples with dates before the specified date."
+  },
+  "exceptDate": {
+    "prefix": "exceptDate",
+    "body": "exceptDate(${1:DateOrRelativeDate})",
+    "description": "Restrict path to all samples except those with the specified date."
+  },
+  "fromDate": {
+    "prefix": "fromDate",
+    "body": "fromDate(${1:DateOrRelativeDate})",
+    "description": "Restrict path to samples with dates after and including the specified date."
+  },
+  "onDate": {
+    "prefix": "onDate",
+    "body": "onDate(${1:DateOrRelativeDate})",
+    "description": "Restrict path to samples with dates equal to the specified date."
+  },
+  "toDate": {
+    "prefix": "toDate",
+    "body": "toDate(${1:DateOrRelativeDate})",
+    "description": "Restrict path to samples with dates before and including the specified date."
+  },
+  "timeZone": {
+    "prefix": "timeZone",
+    "body": "timeZone(${1:TimeZone})",
+    "description": "Flavor specifying what TimeZone to use. Format is Continent/City as a Joda-time timezone identifier."
+  },
+  "useTime": {
+    "prefix": "useTime",
+    "body": "useTime",
+    "description": "Flavor: Use (and show) time in addition to date."
+  },
+  "useTimeZone": {
+    "prefix": "useTimeZone",
+    "body": "useTimeZone",
+    "description": "Flavor: Use (and show) timeZone (and time) in addition to date."
+  },
+
+  // Primary Action
   "search": {
     "prefix": "search",
     "body": "search(${1:Pattern})",
-    "description": "Performs a search for documents from the given source."
+    "description": "Performs a search for documents from the given source. Arguments are one or more search strings (which all have to appear in all returned documents). You can also use .list(), .anyOf() and other operators as arguments."
   },
-  "find": {
-    "prefix": "find",
-    "body": "find(${1:Pattern})",
-    "description": "Find the first occurrence of the pattern given as argument after the current cursor; discard sample if not found."
+  "sampleSince": {
+    "prefix": "sampleSince",
+    "body": "sampleSince(${1:DateOrRelativeDate}, ${2:ThinningFactor})",
+    "description": "Returns documents since a certain date, optionally thinned down by sampling. Second argument defines sampling frequency: for 1%, use 100; for 2%, use 50; For 5% use 20; for 10% use 10; for all samples, use 1."
   },
-  "btc": {
-    "prefix": "btc",
-    "body": "btc",
-    "description": "A pattern matching Bitcoin addresses."
-  },
+  
+  // Columns
   "column": {
     "prefix": "column",
     "body": "column(${1:ColumnName})",
     "description": "Create a column with the given name and display 'The Current Value' (the result of a .find, .match, or .get) in that column."
   },
-  "showRanges": {
-    "prefix": "showRanges",
-    "body": "showRanges",
-    "description": "Flavor: Initially select the 'Ranges' button."
+  "context": {
+    "prefix": "context",
+    "body": "context(${1:ColumnName})",
+    "description": "Create a Context style triple column with the given name for the middle one and display part of the sample (the result of a.search, .find, .findAll, or .match) in its context."
+  },
+  "optional": {
+    "prefix": "optional",
+    "body": "optional",
+    "description": "Continue to accept the current sample even if the next .find or .match fails; use an empty string as the value."
+  },
+  "pivot": {
+    "prefix": "pivot",
+    "body": "pivot",
+    "description": "Flavor that indicates the next .column or .cluster will be selected to be pivoted (in Pivot menu) when panel is created."
+  },
+  "reject": {
+    "prefix": "reject",
+    "body": "reject",
+    "description": "Flavor to negate the meaning of the next .find or .match or subpattern."
+  },
+
+  // Matching & Machine Learning
+  "anyOf": {
+    "prefix": "anyOf",
+    "body": "anyOf(${1:Pattern}, ${2:Pattern})",
+    "description": "Create a multi-way 'OR' pattern from any number of comma separated argument (simple or complex) patterns."
+  },
+  "closestOf": {
+    "prefix": "closestOf",
+    "body": "closestOf(${1:Pattern}, ${2:Pattern})",
+    "description": "Create a multi-way 'OR' pattern from any number of comma separated argument (simple or complex) patterns - finds the closest (in the document) pattern."
+  },
+  "cluster": {
+    "prefix": "cluster",
+    "body": "cluster",
+    "description": "Run the clustering algorithm over all samples that have reached this point."
+  },
+  "find": {
+    "prefix": "find",
+    "body": "find(${1:Pattern})",
+    "description": "Find the first occurrence of the pattern given as argument after the current cursor; discard sample if not found. 'The Current Value' is set to the matching text."
+  },
+  "findAll": {
+    "prefix": "findAll",
+    "body": "findAll(${1:Pattern})",
+    "description": "Find every occurrence of the pattern after the current cursor; discard sample if none found. Create an additional sample for each found occurrence. 'The Current Value' and the cursor is set to the matching text in each occurrence."
+  },
+  "like": {
+    "prefix": "like",
+    "body": "like(${1:Terms})",
+    "description": "Returns a list of terms close in meaning to the average (centroid) of all terms given as comma-separated arguments."
+  },
+  "list": {
+    "prefix": "list",
+    "body": "list(${1:ListAssetPath})",
+    "description": "Create a multi-way 'OR' match for all single or multi-word terms in the named ListAsset."
+  },
+  "match": {
+    "prefix": "match",
+    "body": "match(${1:Pattern})",
+    "description": "Test whether the pattern given as argument matches the sample at the current cursor; discard sample if not there. 'The Current Value' is set to the matching text."
+  },
+  "namedEntity": {
+    "prefix": "namedEntity",
+    "body": "namedEntity",
+    "description": "A pattern matching a named entity."
+  },
+  "nounPhrase": {
+    "prefix": "nounPhrase",
+    "body": "nounPhrase",
+    "description": "A pattern matching a noun phrase."
+  },
+  "verbPhrase": {
+    "prefix": "verbPhrase",
+    "body": "verbPhrase",
+    "description": "A pattern matching a verb phrase."
+  },
+  "word": {
+    "prefix": "word",
+    "body": "word(${1:NumberWords})",
+    "description": "A pattern matching any word. With a number argument, matches that many words."
+  },
+  
+  // Panel Flavors
+  "inputField": {
+    "prefix": "inputField",
+    "body": "inputField(${1:PromptText})",
+    "description": "Create an input field in the 'Input' panel with the prompt (and identifier) given as argument."
+  },
+  "normalize": {
+    "prefix": "normalize",
+    "body": "normalize",
+    "description": "Hide spurious separators in columns."
+  },
+  "numberClusters": {
+    "prefix": "numberClusters",
+    "body": "numberClusters(${1:NumberOfClusters})",
+    "description": "Flavor setting the next desired number of clusters to its integer argument."
+  },
+  "numberLikes": {
+    "prefix": "numberLikes",
+    "body": "numberLikes(${1:NumberOfLikes})",
+    "description": "Flavor setting the next desired number of .like correlates to its integer argument."
+  },
+  "openPanel": {
+    "prefix": "openPanel",
+    "body": "openPanel",
+    "description": "Flavor: Open the following panel. To intially keep panel closed, use .openPanel(false).panel(...)."
+  },
+  "scrub": {
+    "prefix": "scrub",
+    "body": "scrub",
+    "description": "Hide spurious separators in columns."
+  },
+  "showContext": {
+    "prefix": "showContext",
+    "body": "showContext",
+    "description": "Flavor: Initially select the 'Context' button."
+  },
+  "showCounts": {
+    "prefix": "showCounts",
+    "body": "showCounts",
+    "description": "Flavor: Initially select the 'Counts' button."
   },
   "showDate": {
     "prefix": "showDate",
     "body": "showDate",
     "description": "Flavor: Initially select the 'Date' button."
   },
+  "showLabels": {
+    "prefix": "showLabels",
+    "body": "showLabels",
+    "description": "Flavor: Initially select the 'Labels' button."
+  },
+  "showPivoting": {
+    "prefix": "showPivoting",
+    "body": "showPivoting",
+    "description": "Flavor: Initially pivot on all columns indicated by .pivot."
+  },
+  "showRanges": {
+    "prefix": "showRanges",
+    "body": "showRanges",
+    "description": "Flavor: Initially select the 'Ranges' button."
+  },
+  
+  // Output
+  "alert": {
+    "prefix": "alert",
+    "body": "alert(${1:TopNumber}, ${2:AlertText})",
+    "description": "Define an alert to be activated if there is an uptick of event density on the current path."
+  },
+  "collect": {
+    "prefix": "collect",
+    "body": "collect(${1:ListAssetPath})",
+    "description": "Collect the current value (such as a string match) into a ListAsset with the name given as argument. Warning - this will discard any existing ListAsset with that name."
+  },
+  "export": {
+    "prefix": "export",
+    "body": "export",
+    "description": "Export the data to a CSV filename given as an argument and to a location(optional)."
+  },
+  "failTo": {
+    "prefix": "failTo",
+    "body": "failTo(${1:PipeName})",
+    "description": "Flavor that directs following .find or .match to channel their match failing Samples to a named pipe to be received from using .from()."
+  },
+  "indexBy": {
+    "prefix": "indexBy",
+    "body": "indexBy",
+    "description": "Flavor definintthe next column/context/channel/tag/cluster as the index value for an indexed list of texts in a .report."
+  },
+  "multiGraph": {
+    "prefix": "multiGraph",
+    "body": "multiGraph",
+    "description": "Flavor requesting multiple graphs per page for the next column/context/channel/tag/cluster in a .report."
+  },
+  "overWrite": {
+    "prefix": "overWrite",
+    "body": "overWrite",
+    "description": "Flavor: Overwrite the list returned by .collect."
+  },
   "panel": {
     "prefix": "panel",
     "body": "panel(${1:Results})",
     "description": "Create an output panel to display the samples that reach to this point."
+  },
+  "pivotReport": {
+    "prefix": "pivotReport",
+    "body": "pivotReport",
+    "description": "Flavor setting the next .column .cluster, or .report to be pivoted in a .report."
+  },
+  "report": {
+    "prefix": "report",
+    "body": "report(${1:ReportAssetId}, ${2:ChannelName})",
+    "description": "Make samples reaching this operator available to at the Reporting API port for further processing."
+  },
+  "reportText": {
+    "prefix": "reportText",
+    "body": "reportText",
+    "description": "Flavor requesting the next column/context/channel/tag/cluster text be made available as an indexed list of texts in a .report."
+  },
+
+  // Routing & Tagging
+  "to": {
+    "prefix": "to",
+    "body": "to(${1:PipeName})",
+    "description": "Create a named pipe to send all samples to from this point. The name is the argument."
+  },
+  "from": {
+    "prefix": "from",
+    "body": "from(${1:PipeName})",
+    "description": "Read from a named pipe created by .to() - the name arguments must match."
+  },
+  "set": {
+    "prefix": "set",
+    "body": "set(${1:VariableName}, ${2:Value})",
+    "description": "Set the value of a document-wide variable that you can later retrieve with .get . Note that all Samples from any one document share this value."
+  },
+  "get": {
+    "prefix": "get",
+    "body": "get(${1:VariableName})",
+    "description": "Access the value of variables assigned with .set, or structured document field (metavariable) with a given name, or .tag or .note values in the current sample. The value returned is called 'The Current Value'."
+  },
+  "tag": {
+    "prefix": "tag",
+    "body": "tag(${1:VariableName}, ${2:Value})",
+    "description": "Tag each sample that reaches this point in the path with a given boolean or valued tag - a per-sample variable. Tags can be accessed using .get."
+  },
+  "count": {
+    "prefix": "count",
+    "body": "count(${1:VariableName})",
+    "description": "Count all samples that pass on a per-investigation counter variable with the name given as argument."
+  },
+  "const": {
+    "prefix": "const",
+    "body": "const(${1:Text})",
+    "description": "Define a constant string to use as 'The Current Value', for instance in order to assign fixed labels into subsequent columns."
+  },
+  "push": {
+    "prefix": "push",
+    "body": "push",
+    "description": "Take the current value - the result of .find, .match, .inSentence, .inText, .inWOrds, .const, or .get - and temporarily use it as a document to examine."
+  },
+  "pop": {
+    "prefix": "pop",
+    "body": "pop",
+    "description": "Return from a .push to the exact place the .push happened, provided nothing in the push excursion disqualified the sample and the system therefore dropped it."
+  },
+
+  // Range Controls
+  "inDocument": {
+    "prefix": "inDocument",
+    "body": "inDocument",
+    "description": "Set the range for the next find or cluster operation to the entire document. Moves cursor to start of that range."
+  },
+  "inSentence": {
+    "prefix": "inSentence",
+    "body": "inSentence",
+    "description": "Set the range for the next find or cluster operation to the sentence around the cursor. Moves cursor to start of that range. Two number arguments move the range to preceding or subsequent sentences."
+  },
+  "inSample": {
+    "prefix": "inSample",
+    "body": "inSample",
+    "description": "Set the range for the next find or cluster operation to the original sample with 200 characters before and 300 chars after cursor. Moves cursor to start of that range."
+  },
+  "inText": {
+    "prefix": "inText",
+    "body": "inText",
+    "description": "Adjust the range for the next find or cluster operation to the indicated range (offset, width) in characters from current cursor. Moves cursor to start of that range. Also sets current value to that text."
+  },
+  "inWords": {
+    "prefix": "inWords",
+    "body": "inWords",
+    "description": "Adjust the range for the next find or cluster operation to the indicated range (offset, width) in words from current cursor. Moves cursor to start of that range. Also sets current value to that text."
+  },
+
+  // Text Patterns
+  "btc": {
+    "prefix": "btc",
+    "body": "btc",
+    "description": "A pattern matching Bitcoin addresses."
+  },
+  "date": {
+    "prefix": "date",
+    "body": "date",
+    "description": "A pattern matching any date, given in a number of common date formats."
+  },
+  "email": {
+    "prefix": "email",
+    "body": "email",
+    "description": "A pattern matching any email address."
+  },
+  "number": {
+    "prefix": "number",
+    "body": "number",
+    "description": "A pattern matching any number."
+  },
+  "opName": {
+    "prefix": "opName",
+    "body": "opName",
+    "description": "A pattern matching any hacking operations."
+  },
+  "phone": {
+    "prefix": "phone",
+    "body": "phone",
+    "description": "A pattern matching any kind of phone number worldwide. Warning - matches many other kinds of numbers also."
+  },
+  "url": {
+    "prefix": "url",
+    "body": "url",
+    "description": "A pattern matching any URL."
+  },
+
+  // Punctuation 1
+  "ampersand": {
+    "prefix": "ampersand",
+    "body": "ampersand",
+    "description": "A pattern matching one ampersand '&'."
+  },
+  "apostrophe": {
+    "prefix": "apostrophe",
+    "body": "apostrophe",
+    "description": "A pattern matching one apostrophe."
+  },
+  "asterisk": {
+    "prefix": "asterisk",
+    "body": "asterisk",
+    "description": "A pattern matching one asterisk."
+  },
+  "atSign": {
+    "prefix": "atSign",
+    "body": "atSign",
+    "description": "A pattern matching one atSign."
+  },
+  "backQuote": {
+    "prefix": "backQuote",
+    "body": "backQuote",
+    "description": "A pattern matching one backQuote."
+  },
+  "backSlash": {
+    "prefix": "backSlash",
+    "body": "backSlash",
+    "description": "A pattern matching one backSlash."
+  },
+  "caret": {
+    "prefix": "caret",
+    "body": "caret",
+    "description": "A pattern matching one caret '^'."
+  },
+  "colon": {
+    "prefix": "colon",
+    "body": "colon",
+    "description": "A pattern matching one colon."
+  },
+  "comma": {
+    "prefix": "comma",
+    "body": "comma",
+    "description": "A pattern matching one comma."
+  },
+  "dash": {
+    "prefix": "dash",
+    "body": "dash",
+    "description": "A pattern matching one dash '-'."
+  },
+
+  // Punctuation 2
+  "doubleQuote": {
+    "prefix": "doubleQuote",
+    "body": "doubleQuote",
+    "description": "A pattern matching one doubleQuote."
+  },
+  "equalSign": {
+    "prefix": "equalSign",
+    "body": "equalSign",
+    "description": "A pattern matching one equalSign."
+  },
+  "exclamationMark": {
+    "prefix": "exclamationMark",
+    "body": "exclamationMark",
+    "description": "A pattern matching one exclamationMark."
+  },
+  "greaterThanSign": {
+    "prefix": "greaterThanSign",
+    "body": "greaterThanSign",
+    "description": "A pattern matching one greater-than sign '>'."
+  },
+  "leftBrace": {
+    "prefix": "leftBrace",
+    "body": "leftBrace",
+    "description": "A pattern matching one leftbrace '{'."
+  },
+  "leftBracket": {
+    "prefix": "leftBracket",
+    "body": "leftBracket",
+    "description": "A pattern matching one leftBracket '['."
+  },
+  "leftParenthesis": {
+    "prefix": "leftParenthesis",
+    "body": "leftParenthesis",
+    "description": "A pattern matching one leftParenthesis."
+  },
+  "lessThanSign": {
+    "prefix": "lessThanSign",
+    "body": "lessThanSign",
+    "description": "A pattern matching one less-than sign '<'."
+  },
+  "percentSign": {
+    "prefix": "percentSign",
+    "body": "percentSign",
+    "description": "A pattern matching one percentsign '%'."
+  },
+  "period": {
+    "prefix": "period",
+    "body": "period",
+    "description": "A pattern matching one period."
+  },
+  "plusSign": {
+    "prefix": "plusSign",
+    "body": "plusSign",
+    "description": "A pattern matching one plus sign."
+  },
+
+  // Punctuation 3
+  "questionMark": {
+    "prefix": "questionMark",
+    "body": "questionMark",
+    "description": "A pattern matching one questionMark."
+  },
+  "rightBrace": {
+    "prefix": "rightBrace",
+    "body": "rightBrace",
+    "description": "A pattern matching one rightbrace '}'."
+  },
+  "rightBracket": {
+    "prefix": "rightBracket",
+    "body": "rightBracket",
+    "description": "A pattern matching one rightBracket ']'."
+  },
+  "rightParenthesis": {
+    "prefix": "rightParenthesis",
+    "body": "rightParenthesis",
+    "description": "A pattern matching one right parenthesis."
+  },
+  "semicolon": {
+    "prefix": "semicolon",
+    "body": "semicolon",
+    "description": "A pattern matching one semicolon."
+  },
+  "sharpSign": {
+    "prefix": "sharpSign",
+    "body": "sharpSign",
+    "description": "A pattern matching one sharpsign '#'."
+  },
+  "slash": {
+    "prefix": "slash",
+    "body": "slash",
+    "description": "A pattern matching one slash."
+  },
+  "tilde": {
+    "prefix": "tilde",
+    "body": "tilde",
+    "description": "A pattern matching one tilde."
+  },
+  "underscore": {
+    "prefix": "underscore",
+    "body": "underscore",
+    "description": "A pattern matching one underscore."
+  },
+  "verticalBar": {
+    "prefix": "verticalBar",
+    "body": "verticalBar",
+    "description": "A pattern matching one verticalbar '|'."
+  },
+
+  // Currency Markers
+  "crownSign": {
+    "prefix": "crownSign",
+    "body": "crownSign",
+    "description": "Matches one crown abbreviation such as 'Kr' in the language of any country that uses a currency named crowns."
+  },
+  "currencyIso": {
+    "prefix": "currencyIso",
+    "body": "currencyIso",
+    "description": "Matches any ISO abbreviation for any currency."
+  },
+  "currencySign": {
+    "prefix": "currencySign",
+    "body": "currencySign",
+    "description": "Matches one currency symbol."
+  },
+  "dollarSign": {
+    "prefix": "dollarSign",
+    "body": "dollarSign",
+    "description": "Matches one Dollar sign."
+  },
+  "euroSign": {
+    "prefix": "euroSign",
+    "body": "euroSign",
+    "description": "Matches one Euro sign."
+  },
+  "francSign": {
+    "prefix": "francSign",
+    "body": "francSign",
+    "description": "Matches one Swiss Franc abbreviation."
+  },
+  "gbpSign": {
+    "prefix": "gbpSign",
+    "body": "gbpSign",
+    "description": "Matches one pound sign."
+  },
+  "rupeeSign": {
+    "prefix": "rupeeSign",
+    "body": "rupeeSign",
+    "description": "Matches one rupee symbol."
+  },
+  "yenSign": {
+    "prefix": "yenSign",
+    "body": "yenSign",
+    "description": "Matches one yen sign."
+  },
+
+  // Currency Values
+  "cny": {
+    "prefix": "cny",
+    "body": "cny",
+    "description": "A pattern matching an amount of currency expressed in Yuan using a Yan symbol or as CNY."
+  },
+  "crown": {
+    "prefix": "crown",
+    "body": "crown",
+    "description": "A pattern matching an amount of currency expressed in crowns of any kind."
+  },
+  "currency": {
+    "prefix": "currency",
+    "body": "currency",
+    "description": "A pattern matching an amount of currency in any known currency."
+  },
+  "dollar": {
+    "prefix": "dollar",
+    "body": "dollar",
+    "description": "A pattern matching an amount of currency expressed in any kind of dollars (US, Australian, Hong Kong Dollars, etc)."
+  },
+  "eur": {
+    "prefix": "eur",
+    "body": "eur",
+    "description": "A pattern matching an amount of currency expressed in Euro using a Euro symbol or as EUR."
+  },
+  "franc": {
+    "prefix": "franc",
+    "body": "franc",
+    "description": "A pattern matching an amount of currency expressed in Swiss Franc using 'Fr' or as CHF."
+  },
+  "gbp": {
+    "prefix": "gbp",
+    "body": "gbp",
+    "description": "A pattern matching an amount of currency expressed in British Pounds using a pound sign or as GBP."
+  },
+  "inr": {
+    "prefix": "inr",
+    "body": "inr",
+    "description": "A pattern matching an amount of currency expressed in Rupees using a Rupee symbol or as INR."
+  },
+  "jpy": {
+    "prefix": "jpy",
+    "body": "jpy",
+    "description": "A pattern matching an amount of currency expressed in Yen using a Yen symbol or as JPY."
+  },
+  "usd": {
+    "prefix": "usd",
+    "body": "usd",
+    "description": "A pattern matching an amount of currency expressed in US Dollars using a dollar sign or as usd."
   }
 }

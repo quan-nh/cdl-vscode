@@ -4,6 +4,10 @@ CDL syntax highlighting for Visual Studio Code.
 
 ![CDL](images/cdl.gif)
 
+## Supported Features
+
++ Syntax highlighting
++ Code completion
 
 ## Release Notes
 
