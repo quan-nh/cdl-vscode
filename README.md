@@ -1,5 +1,8 @@
 # CDL
 
+[![Version](https://vsmarketplacebadge.apphb.com/version-short/quan.cdl.svg)](https://marketplace.visualstudio.com/items?itemName=quan.cdl)
+[![Installs](https://vsmarketplacebadge.apphb.com/installs/quan.cdl.svg)](https://marketplace.visualstudio.com/items?itemName=quan.cdl)
+
 CDL syntax highlighting for Visual Studio Code.
 
 ![CDL](images/cdl.gif)
